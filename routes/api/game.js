@@ -80,11 +80,11 @@ router.post('/:gameId/move',(req,res) => {
                 return res.status(400).json({msg:"One or more players have not registered yet"});
             }
             var gameObj = {};
-            if(String(playerId) === String(games[0].Player_One) && !game[0].Player_One_Choice)
+            if(String(playerId) === String(games[0].Player_One) && !games[0].Player_One_Choice)
             {
                 gameObj.Player_One_Choice = req.query.choice;
             }
-            else if(String(playerId) === String(games[0].Player_Two) && !game[0].Player_Two_Choice)
+            else if(String(playerId) === String(games[0].Player_Two) && !games[0].Player_Two_Choice)
             {
                 gameObj.Player_Two_Choice = req.query.choice;
             }
@@ -104,6 +104,67 @@ router.post('/:gameId/move',(req,res) => {
     }).catch((err) => {
         console.log(err);
         return res.status(500).json({msg:"Problem with fetching games from the database"});
+    });
+});
+
+router.post('/:gameId/next_round',(req,res) => {
+    if(!req.query.last_round_winner)
+    {
+        return res.status(400).json({msg:"Query fields to be inserted : last_round_winner", query:req.query});
+    }
+    var gameId = ObjectId(req.params.gameId);
+    var gameQuery = {};
+    gameQuery._id = gameId;
+    var playerId = ObjectId(req.query.last_round_winner);
+    var playerQuery = {};
+    playerQuery._id = playerId;
+    Player.find(playerQuery).then((players) => {
+        if(players.length === 0)
+        {
+            return res.status(400).json({msg:"Invalid player ID", input:req.params.playerId});
+        }
+        Game.find(gameQuery).then((games) => {
+            if(games.length === 0)
+            {
+                return res.status(400).json({msg:"Invalid game ID", input:req.params.gameId});
+            }
+            var gameObj = {};
+            if(games[0].Rounds_Finished >= games[0].Maximum_Rounds)
+            {
+                return res.status(400).json({msg:"Maximum rounds played. Start a new game"});
+            } 
+            games[0].Rounds_Finished++;
+            gameObj.Rounds_Finished = games[0].Rounds_Finished;
+            if(String(playerId) === String(games[0].Player_One))
+            {
+                games[0].Player_One_Score++;
+                gameObj.Player_One_Score = games[0].Player_One_Score;
+            }
+            else if(String(playerId) === String(games[0].Player_Two))
+            {
+                games[0].Player_Two_Score++;
+                gameObj.Player_Two_Score = games[0].Player_Two_Score;
+            }
+            gameObj.Player_One_Choice = undefined;
+            gameObj.Player_Two_Choice = undefined;
+            var gameQuery = {};
+            gameQuery._id = gameId;
+            Game.updateOne(gameQuery,gameObj, (err) => {
+                if(err)
+                {
+                    return res.status(500).json({msg:"Some problem occurred while updating game"});
+                }
+                return res.status(200).json({msg:"Round cleared and data updated successfully"});
+            });
+
+        }).catch((err) => {
+            console.log(err);
+            return res.status(500).json({msg:"Problem with fetching games from the database"});
+        });
+
+    }).catch((err) => {
+        console.log(err);
+        return res.status(500).json({msg:"Problem with fetching players from the database"});
     });
 });
 

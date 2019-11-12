@@ -81,7 +81,7 @@ router.post('/:playerId/join/:gameId',(req,res) => {
 
     }).catch((err) => {
         console.log(err);
-        return res.status(500).json({msg:"Problem with fetching games from the database"});
+        return res.status(500).json({msg:"Problem with fetching players from the database"});
     });
     
 });
