@@ -1,0 +1,26 @@
+{
+  "name": "rock-paper-scissor-lizard-spock-blockchain-dapp",
+  "version": "1.0.0",
+  "description": "Blockchain based decentralized application to play rock paper scissor lizard spock",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tarun0409/rock-paper-scissor-lizard-spock-blockchain-dapp.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tarun0409/rock-paper-scissor-lizard-spock-blockchain-dapp/issues"
+  },
+  "homepage": "https://github.com/tarun0409/rock-paper-scissor-lizard-spock-blockchain-dapp#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^5.7.10"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.4"
+  }
+}
