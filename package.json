@@ -4,7 +4,8 @@
   "description": "Blockchain based decentralized application to play rock paper scissor lizard spock",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node app",
+    "dev": "nodemon app"
   },
   "repository": {
     "type": "git",
