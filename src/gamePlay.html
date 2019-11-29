@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Rock Paper Scissor Lizard Spock</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="web3.min.js"></script>
+    <script src="truffle-contract.js"></script>
+    <script src="blockchain.js"></script>
+    <script src="cookies.js"></script>
+    <script src="gamePlay.js"></script>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="gamePlay.css">
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="row playRow"><h3>Rock Paper Scissor Lizard Spock</h3></div>
+        <div class="row playRow">
+            <select name="move" id="moveSelect" class="form-control">
+                <option value="1">Rock</option>
+                <option value="2">Paper</option>
+                <option value="3">Scissor</option>
+                <option value="4">Lizard</option>
+                <option value="5">Spock</option>
+            </select>
+        </div>
+        <div class="row playRow">
+            <label for="Nonce">Nonce</label>
+            <input type="text" name="Nonce" id="nonce" class="form-control">
+        </div>
+        <div class="row playRow">
+            <button type="button" id="moveSubmit" class="btn btn-primary btn-block">Make Move</button>
+        </div>
+        <div class="row playRow">
+            <button type="button", id="reveal", class="btn btn-primary btn-block">Reveal</button>
+        </div>
+        <div class="row playRow">
+            <button type="button", id="showWinner", class="btn btn-primary btn-block">Show Winner</button>
+        </div>
+        <div class="row playRow">
+            <button type="button", id="gamePage", class="btn btn-primary btn-block">Go to game page</button>
+        </div>
+    </div>
+</body>
+</html>

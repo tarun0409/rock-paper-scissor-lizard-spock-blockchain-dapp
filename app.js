@@ -2,6 +2,7 @@ express = require('express');
 const bcrypt = require('bcrypt');
 app = express();
 mongoose = require('mongoose');
+const fs = require('fs');
 
 var db = 'mongodb://localhost/rpsls';
 mongoose.connect(db);
@@ -11,7 +12,7 @@ app.use(express.urlencoded({extended:false}));
 app.use(express.static(__dirname+'/src'));
 
 app.get('/',(req,res) => {
-    res.send("Hello");
+    res.sendFile('src/gameMain.html', { root: __dirname });
 });
 
 app.get('/register',(req,res) => {
@@ -43,6 +44,32 @@ app.post('/login',(req,res) => {
         console.log(err);
         return res.status(500).json({msg:"Problem occurred while retrieving players from database"});
     });
+});
+
+app.get('/validateLogin/:id',(req,res) => {
+    var playerId = ObjectId(req.params.id);
+    var playerQuery = {};
+    playerQuery._id = playerId;
+    Player.find(playerQuery).then((players) => {
+        if(players.length === 0)
+        {
+            return res.status(400).json({msg:"Player not registered"});
+        }
+        return res.status(200).json({msg:"Player validated"});
+    }).catch((err) => {
+        console.log(err);
+        return res.status(400).json({msg:"Problem occurred while retrieving players from database"});
+    });
+});
+
+app.get('/play',(req,res) => {
+    res.sendFile('src/gamePlay.html',{root: __dirname});
+});
+
+app.get('/contract',(req,res) => {
+    let contractData = fs.readFileSync('build/contracts/Rpsls.json');
+    let contractObj = JSON.parse(contractData);
+    return res.status(200).json({contract:contractObj});
 });
 
 app.use('/game', require('./routes/api/game'));
