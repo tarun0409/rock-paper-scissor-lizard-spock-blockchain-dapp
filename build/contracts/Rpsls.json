@@ -24638,10 +24638,16 @@
       "links": {},
       "address": "0x6D8Bee75Cf9deCf87b27CF25E74DBDe8F90C2255",
       "transactionHash": "0xa1722d78e2b9271df884a6f5f008b1f502bd16a681ee2ade28a6b3d888403ee3"
+    },
+    "1575104881205": {
+      "events": {},
+      "links": {},
+      "address": "0x6021210ccDe2eAccCc1E3c818dF3274ECEFd26f9",
+      "transactionHash": "0x56859305c54ab3ce714c70fa189d3c81de3b7150516666e198c09e112fbc58d0"
     }
   },
   "schemaVersion": "3.0.16",
-  "updatedAt": "2019-11-29T22:42:55.063Z",
+  "updatedAt": "2019-11-30T09:17:11.223Z",
   "devdoc": {
     "methods": {}
   },

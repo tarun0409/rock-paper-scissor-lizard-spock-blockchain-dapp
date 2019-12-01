@@ -23,6 +23,7 @@ contract Rpsls
     address payable private owner;
     mapping (bytes32 => Game) private games;
     uint private bidAmount = 0.0001 ether;
+    bytes32 gId;
 
     modifier gameDoesNotExist(bytes32 gameId)
     {
@@ -54,7 +55,7 @@ contract Rpsls
         _;
     }
 
-    function bothPlayersRevealed(bytes32 gameId) private view returns(bool)
+    function bothPlayersRevealed(bytes32 gameId) public view returns(bool)
     {
         return games[gameId].player1Revealed && games[gameId].player2Revealed;
     }
@@ -132,6 +133,97 @@ contract Rpsls
         }
     }
 
+    function withdraw() private
+    {
+        bytes32 player1RockHash = keccak256(abi.encodePacked("1", games[gId].player1Nonce));
+        bytes32 player1PaperHash = keccak256(abi.encodePacked("2", games[gId].player1Nonce));
+        bytes32 player1ScissorHash = keccak256(abi.encodePacked("3", games[gId].player1Nonce));
+        bytes32 player1LizardHash = keccak256(abi.encodePacked("4", games[gId].player1Nonce));
+        bytes32 player1SpockHash = keccak256(abi.encodePacked("5", games[gId].player1Nonce));
+        bytes32 player2RockHash = keccak256(abi.encodePacked("1", games[gId].player2Nonce));
+        bytes32 player2PaperHash = keccak256(abi.encodePacked("2", games[gId].player2Nonce));
+        bytes32 player2ScissorHash = keccak256(abi.encodePacked("3", games[gId].player2Nonce));
+        bytes32 player2LizardHash = keccak256(abi.encodePacked("4", games[gId].player2Nonce));
+        bytes32 player2SpockHash = keccak256(abi.encodePacked("5", games[gId].player2Nonce));
+        if(games[gId].player1Hash == player1RockHash)
+        {
+            if(games[gId].player2Hash == player2LizardHash || games[gId].player2Hash == player2ScissorHash)
+            {
+                games[gId].winner = games[gId].player1;
+            }
+            else if(games[gId].player2Hash == player2RockHash)
+            {
+                games[gId].winner = owner;
+            }
+            else
+            {
+                games[gId].winner = games[gId].player2;
+            }
+        }
+        else if(games[gId].player1Hash == player1PaperHash)
+        {
+            if(games[gId].player2Hash == player2RockHash || games[gId].player2Hash == player2SpockHash)
+            {
+                games[gId].winner = games[gId].player1;
+            }
+            else if(games[gId].player2Hash == player2PaperHash)
+            {
+                games[gId].winner = owner;
+            }
+            else
+            {
+                games[gId].winner = games[gId].player2;
+            }
+        }
+        else if(games[gId].player1Hash == player1ScissorHash)
+        {
+            if(games[gId].player2Hash == player2PaperHash || games[gId].player2Hash == player2LizardHash)
+            {
+                games[gId].winner = games[gId].player1;
+            }
+            else if(games[gId].player2Hash == player2ScissorHash)
+            {
+                games[gId].winner = owner;
+            }
+            else
+            {
+                games[gId].winner = games[gId].player2;
+            }
+        }
+        else if(games[gId].player1Hash == player1LizardHash)
+        {
+            if(games[gId].player2Hash == player2PaperHash || games[gId].player2Hash == player2SpockHash)
+            {
+                games[gId].winner = games[gId].player1;
+            }
+            else if(games[gId].player2Hash == player2LizardHash)
+            {
+                games[gId].winner = owner;
+            }
+            else
+            {
+                games[gId].winner = games[gId].player2;
+            }
+        }
+        else if(games[gId].player1Hash == player1SpockHash)
+        {
+            if(games[gId].player2Hash == player2ScissorHash || games[gId].player2Hash == player2RockHash)
+            {
+                games[gId].winner = games[gId].player1;
+            }
+            else if(games[gId].player2Hash == player2LizardHash)
+            {
+                games[gId].winner = owner;
+            }
+            else
+            {
+                games[gId].winner = games[gId].player2;
+            }
+        }
+        games[gId].winner.transfer(games[gId].bounty);
+        games[gId].status = GameStatus.CLOSED;
+    }
+
     function reveal(bytes32 gameId, string memory nonce) public gameIsStarted(gameId) bothPlayersPlayed(gameId)
     {
         if(games[gameId].player1 == msg.sender)
@@ -151,95 +243,9 @@ contract Rpsls
         }
         if(bothPlayersRevealed(gameId))
         {
-            Game storage game = games[gameId];
-            uint256 bounty = games[gameId].bounty;
-            bytes32 player1RockHash = keccak256(abi.encodePacked("1", game.player1Nonce));
-            bytes32 player1PaperHash = keccak256(abi.encodePacked("2", game.player1Nonce));
-            bytes32 player1ScissorHash = keccak256(abi.encodePacked("3", game.player1Nonce));
-            bytes32 player1LizardHash = keccak256(abi.encodePacked("4", game.player1Nonce));
-            bytes32 player1SpockHash = keccak256(abi.encodePacked("5", game.player1Nonce));
-            bytes32 player2RockHash = keccak256(abi.encodePacked("1", game.player2Nonce));
-            bytes32 player2PaperHash = keccak256(abi.encodePacked("2", game.player2Nonce));
-            bytes32 player2ScissorHash = keccak256(abi.encodePacked("3", game.player2Nonce));
-            bytes32 player2LizardHash = keccak256(abi.encodePacked("4", game.player2Nonce));
-            bytes32 player2SpockHash = keccak256(abi.encodePacked("5", game.player2Nonce));
-            if(game.player1Hash == player1RockHash)
-            {
-                if(game.player2Hash == player2LizardHash || game.player2Hash == player2ScissorHash)
-                {
-                    game.winner = game.player1;
-                }
-                else if(game.player2Hash == player2RockHash)
-                {
-                    game.winner = owner;
-                }
-                else
-                {
-                    game.winner = game.player2;
-                }
-            }
-            else if(game.player1Hash == player1PaperHash)
-            {
-                if(game.player2Hash == player2RockHash || game.player2Hash == player2SpockHash)
-                {
-                    game.winner = game.player1;
-                }
-                else if(game.player2Hash == player2PaperHash)
-                {
-                    game.winner = owner;
-                }
-                else
-                {
-                    game.winner = game.player2;
-                }
-            }
-            else if(game.player1Hash == player1ScissorHash)
-            {
-                if(game.player2Hash == player2PaperHash || game.player2Hash == player2LizardHash)
-                {
-                    game.winner = game.player1;
-                }
-                else if(game.player2Hash == player2ScissorHash)
-                {
-                    game.winner = owner;
-                }
-                else
-                {
-                    game.winner = game.player2;
-                }
-            }
-            else if(game.player1Hash == player1LizardHash)
-            {
-                if(game.player2Hash == player2PaperHash || game.player2Hash == player2SpockHash)
-                {
-                    game.winner = game.player1;
-                }
-                else if(game.player2Hash == player2LizardHash)
-                {
-                    game.winner = owner;
-                }
-                else
-                {
-                    game.winner = game.player2;
-                }
-            }
-            else if(game.player1Hash == player1SpockHash)
-            {
-                if(game.player2Hash == player2ScissorHash || game.player2Hash == player2RockHash)
-                {
-                    game.winner = game.player1;
-                }
-                else if(game.player2Hash == player2LizardHash)
-                {
-                    game.winner = owner;
-                }
-                else
-                {
-                    game.winner = game.player2;
-                }
-            }
-            game.winner.transfer(bounty);
-            game.status = GameStatus.CLOSED;
+            // Game storage game = games[gameId];
+            gId = gameId;
+            withdraw();
         }
     }
 
@@ -247,4 +253,24 @@ contract Rpsls
     {
         return games[gameId].winner;
     }
+
+    //Following functions for testing purposes
+
+    function gameOpen(bytes32 gameId) public view returns(bool)
+    {
+        return games[gameId].status == GameStatus.OPEN;
+    }
+    function gameStarted(bytes32 gameId) public view returns(bool)
+    {
+        return games[gameId].status == GameStatus.STARTED;
+    }
+    function bothPlayersMoved(bytes32 gameId) public view returns(bool)
+    {
+        return games[gameId].player1Played && games[gameId].player2Played;
+    }
+    function getPlayerOne(bytes32 gameId) public view returns(address)
+    {
+        return games[gameId].player1;
+    }
+
 }
